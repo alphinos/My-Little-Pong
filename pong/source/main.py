@@ -1,4 +1,3 @@
-import pygame
 import theater.director as thD
 
 def main():
