@@ -36,29 +36,34 @@ class Director:
         #self.plaudit.subscribe(self.enemy)
     
     def collision(self):
-        for paddle in self.paddles.sprites():
-            if pygame.sprite.spritecollide(paddle, self.SingleBall, False):
-                print("Collided")
-                self.ball.direction.x *= -1
-                # self.ball.direction.y *= -1
-                # if paddle.rect.left < self.ball.rect.right:
-                #     self.ball.direction.x *= -1
-                # if paddle.rect.right > self.ball.rect.left:
-                #     self.ball.direction.x *= -1
-                # if paddle.rect.bottom < self.ball.rect.top:
-                #     self.ball.direction.y *= -1
-                # if paddle.rect.top > self.ball.rect.bottom:
-                #     self.ball.direction.y *= -1
+        collide = pygame.sprite.spritecollide(self.ball, self.paddles, False)
+        
+        if collide:
+            paddle = collide[0].rect
+            if abs(self.ball.rect.right - paddle.left) < 10 and self.ball.direction.x > 0:
+                self.ball.direction.x = -1
+            if abs(self.ball.rect.left - paddle.right) < 10 and self.ball.direction.x < 0:
+                self.ball.direction.x = 1
     
     def wallCollision(self):
-        if self.ball.rect.x >= config.SCREEN_SIZE[0]:
+        if self.ball.rect.right >= config.SCREEN_SIZE[0]:
             self.reset()
-        if self.ball.rect.x <= 0:
+        if self.ball.rect.left <= 0:
             self.reset()
-        if self.ball.rect.y >= config.SCREEN_SIZE[1]:
+        if self.ball.rect.bottom >= config.SCREEN_SIZE[1]:
+            self.ball.rect.bottom = config.SCREEN_SIZE[1]
             self.ball.direction.y *= -1
-        if self.ball.rect.y <= 0:
+        if self.ball.rect.top <= 0:
+            self.ball.rect.top = 0
             self.ball.direction.y *= -1
+        
+        for paddle in self.paddles.sprites():
+            if paddle.rect.top <= 0 and paddle.direction.y == -1:
+                paddle.rect.top = 0
+                paddle.direction.y = 0
+            if paddle.rect.bottom >= config.SCREEN_SIZE[1] and paddle.direction.y == 1:
+                paddle.rect.bottom = config.SCREEN_SIZE[1]
+                paddle.direction.y = 0
     
     def reset(self):
         # Reset the ball to the center of the screen and change its direction
@@ -77,6 +82,7 @@ class Director:
             self.plaudit.update()
             self.player.update()
             self.ball.update()
+            self.enemy.followTarget(self.ball.rect.y)
             self.enemy.update()
             
             self.wallCollision()
@@ -86,6 +92,8 @@ class Director:
             
             self.paddles.draw(self.stage)
             self.SingleBall.draw(self.stage)
+            
+            print(self.clock.get_fps())
             
             pygame.display.update()
             self.clock.tick(config.FPS)

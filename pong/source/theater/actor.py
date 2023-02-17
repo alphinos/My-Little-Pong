@@ -49,14 +49,15 @@ class AutoActor(Actor):
         super().__init__(width, height)
         self.target = None
     
-    def followTarget(self):
-        if self.rect.top > self.target.rect.bottom + self.rect.height // 2:
+    def followTarget(self,pos):
+        if self.rect.top > pos:
             self.direction.y = -1
-        if self.rect.bottom < self.target.rect.top - self.rect.height // 2:
+        if self.rect.bottom < pos:
             self.direction.y = 1
+        # if self.target.rect.centery < self.rect.top and self.target.rect.centery > self.rect.bottom:
+        #     self.direction.y = 0
     
     def update(self):
-        self.followTarget()
         self.correctDir()
         self.move()
 
