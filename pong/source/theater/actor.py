@@ -29,7 +29,6 @@ class Actor(pygame.sprite.Sprite):
         self.move()
         
 class ControlActor(Actor):
-    
     def __init__(self, width, height):
         super().__init__(width, height)
     
@@ -54,8 +53,6 @@ class AutoActor(Actor):
             self.direction.y = -1
         if self.rect.bottom < pos:
             self.direction.y = 1
-        # if self.target.rect.centery < self.rect.top and self.target.rect.centery > self.rect.bottom:
-        #     self.direction.y = 0
     
     def update(self):
         self.correctDir()

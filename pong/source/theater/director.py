@@ -10,14 +10,16 @@ class Director:
         self.stage = pygame.display.set_mode( config.SCREEN_SIZE )
         pygame.display.set_caption("pong")
         self.clock = pygame.time.Clock()
+
+        paddleH =  config.PADDLE_H
         
-        self.player = theater.actor.ControlActor(48, 172)
+        self.player = theater.actor.ControlActor(16, paddleH)
         self.player.image.fill(theater.color.MAGENTA)
         
         self.ball = theater.actor.RandomActor(24, 24)
         self.ball.image.fill(theater.color.PINK)
         
-        self.enemy = theater.actor.AutoActor(48, 172)
+        self.enemy = theater.actor.AutoActor(16, paddleH)
         self.enemy.image.fill(theater.color.PURPLE)
         self.enemy.target = self.ball
         
@@ -33,7 +35,8 @@ class Director:
         
         self.plaudit = theater.plaudit.Plaudit()
         self.plaudit.subscribe(self.player)
-        #self.plaudit.subscribe(self.enemy)
+
+        self.glitter = theater.glitter.GlitterThrower()
     
     def collision(self):
         collide = pygame.sprite.spritecollide(self.ball, self.paddles, False)
@@ -69,8 +72,8 @@ class Director:
         # Reset the ball to the center of the screen and change its direction
         self.ball.rect.centerx = config.SCREEN_SIZE[0] // 2 - self.ball.rect.width // 2
         self.ball.rect.centery = config.SCREEN_SIZE[1] // 2 - self.ball.rect.height // 2
-        self.ball.direction.x = randint(-100, 101)
-        self.ball.direction.y = randint(-30, 30)
+        self.ball.direction.x = randint(1, 101) * theater.utility.randSignal()
+        self.ball.direction.y = randint(1, 30) * theater.utility.randSignal()
     
     def run(self):
         while True:
@@ -79,6 +82,8 @@ class Director:
                     pygame.quit()
                     sys.exit()
             
+            self.glitter.managing( 40, target=self.ball)
+
             self.plaudit.update()
             self.player.update()
             self.ball.update()
@@ -90,6 +95,8 @@ class Director:
             
             self.stage.fill("black")
             
+            self.glitter.throwGlitter(self.stage)
+
             self.paddles.draw(self.stage)
             self.SingleBall.draw(self.stage)
             
