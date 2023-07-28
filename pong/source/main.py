@@ -1,10 +1,4 @@
 
-import theater.director as thD
-
-def main():
-    theater = thD.Director()
-    theater.run()
-
 import pygame
 from sys import exit
 import config
